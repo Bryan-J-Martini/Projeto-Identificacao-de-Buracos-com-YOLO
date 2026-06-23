@@ -1,6 +1,6 @@
 # Segmentação de Instâncias para Detecção de Buracos em Vias Públicas 🚗🔍
 
-Este projeto foi desenvolvido como requisito avaliativo para a disciplina de **Introdução à Inteligência Artificial** do curso de graduação em **Inteligência Artificial** da **Fatec de Rio Claro**, sob a orientação do **Professor Davi Duarte de Paula**.
+Este projeto foi desenvolvido como requisito avaliativo para a disciplina de **Introdução à Inteligência Artificial** do curso de graduação em **Inteligência Artificial** da **Fatec de Rio Claro**, sob a orientação do **[Professor Davi Duarte de Paula](https://github.com/daviduarte)**.
 
 ---
 
