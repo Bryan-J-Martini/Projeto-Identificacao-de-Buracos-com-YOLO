@@ -5,7 +5,7 @@ Este projeto foi desenvolvido como requisito avaliativo para a disciplina de **I
 ---
 
 ## 📌 Objetivo do Trabalho
-O objetivo principal deste projeto é aplicar técnicas de Visão Computacional para identificar de forma automatizada imperfeições na malha rodoviária (buracos e panelas). Utilizando modelos de **Segmentação de Instâncias**, o sistema não apenas detecta a presença da falha, mas delineia o contorno exato do problema, permitindo futuramente mensurar a área afetada para auxiliar órgãos de manutenção urbana.
+O objetivo principal deste projeto é aplicar técnicas de Visão Computacional para identificar de forma automatizada imperfeições na malha rodoviária (buracos). Utilizando modelos de **Segmentação de Instâncias**, o sistema não apenas detecta a presença da falha, mas delineia o contorno exato do problema, permitindo futuramente mensurar a área afetada para auxiliar órgãos de manutenção urbana.
 
 ---
 
@@ -19,14 +19,7 @@ A aplicação consiste em uma solução de IA de ponta a ponta que engloba:
 
 ## 📊 Dataset (Origem e Tratamento)
 * **Origem:** O dataset foi coletado e exportado através da plataforma **Roboflow**, contendo imagens reais de ruas e rodovias com falhas asfálticas.
-* **Classes originais:** `Pothole` (buracos grandes/panelas) e `hole` (buracos comuns).
-
-### 🛠️ Desafios Técnicos e Soluções Aplicadas:
-Durante a inicialização do treinamento, o ecossistema PyTorch/YOLO acusou inconsistências críticas nos dados brutos vindos do Roboflow (erros de dimensões de tensores vazios e classes fora do limite). 
-Para salvar o projeto de segmentação, foi desenvolvido um script customizado em Python que realizou uma limpeza cirúrgica no dataset local:
-* **Remoção de anotações mistas:** Foram deletadas linhas de anotação que continham caixas delimitadoras normais (Bounding Boxes de detecção pura com 5 elementos), forçando o dataset a conter estritamente polígonos de segmentação.
-* **Filtro de Classes Fantasmas:** Arquivos de texto que continham referências a uma terceira classe inexistente (IDs `>= 2`) foram limpos para alinhar-se perfeitamente às duas classes configuradas no arquivo `data.yaml`.
-* **Limpeza de Cache:** Resíduos de arquivos `.cache` antigos foram expurgados para garantir que o YOLO reavaliasse o dataset corrigido do zero.
+* **Classes originais:** `Pothole` (buracos grandes) e `hole` (buracos comuns).
 
 ---
 
@@ -47,10 +40,20 @@ Dado o peso computacional de treinar uma rede neural convolucional para segmenta
 
 A validação do modelo gerou as seguintes métricas de desempenho:
 
-* **Classe Pothole:** Alcançou excelentes taxas de sensibilidade (**67%** de acerto direto no contorno de panelas volumosas). Por ser uma classe com pouca amostragem no dataset (apenas 9 instâncias de teste), o resultado foi considerado muito satisfatório para um modelo *Nano*.
+* **Classe Pothole:** Alcançou excelentes taxas de sensibilidade (**67%** de acerto direto no contorno de buracos volumosas). Por ser uma classe com pouca amostragem no dataset (apenas 9 instâncias de teste), o resultado foi considerado muito satisfatório para um modelo *Nano*.
 * **Classe hole:** Apresentou uma capacidade massiva de encontrar os alvos (Sensibilidade/Recall de **81%**). 
 * **Falsos Positivos (Oportunidade de Melhoria):** A matriz de confusão indicou que o modelo inicial se mostrou "empolgado demais", confundindo texturas irregulares de asfalto, sombras ou emendas com buracos (gerando um volume alto de falsos positivos contra o *Background*). 
 * **Solução Prática Aplicada:** O problema foi mitigado diretamente na aplicação ao ajustar o slider de confiança do frontend de `0.25` para `0.35`~`0.40`. Isso filtrou ruídos visuais e gerou segmentações limpas e altamente confiáveis.
+
+<div align="center">
+
+### Matriz de Confusão Treinamento
+![Interface de Entrada](img/confusion_matrix_normalized_train.png)
+
+### Matriz de Confusão Validação
+![Resultado da Segmentação](img/confusion_matrix_normalized.png)
+
+</div>
 
 ---
 
@@ -79,3 +82,16 @@ Certifique-se de ter o **Python 3.10+** instalado no seu computador.
 Instale as bibliotecas necessárias abrindo o terminal na pasta raiz do projeto e executando:
 ```bash
 pip install ultralytics fastapi uvicorn python-multipart
+
+```
+### 3. Backend:
+Para ativar o back no terminal digite: 
+```bash
+    uvicorn api:app --reload
+```
+## 4. Frontend: 
+Para ativar o front no terminal:
+```bash
+    cd frontend
+    npm run dev
+```
