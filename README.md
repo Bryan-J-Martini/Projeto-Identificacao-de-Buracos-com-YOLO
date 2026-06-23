@@ -1,2 +1,81 @@
-# Projeto-Identificacao-de-Buracos-com-YOLO
-Projeto criado com o intuito de testar e aprender sobre a ferramenta de treinamento de identificação de objetos YOLO, com fins educacionais
+# Segmentação de Instâncias para Detecção de Buracos em Vias Públicas 🚗🔍
+
+Este projeto foi desenvolvido como requisito avaliativo para a disciplina de **Introdução à Inteligência Artificial** do curso de graduação em **Inteligência Artificial** da **Fatec de Rio Claro**, sob a orientação do **Professor Davi Duarte de Paula**.
+
+---
+
+## 📌 Objetivo do Trabalho
+O objetivo principal deste projeto é aplicar técnicas de Visão Computacional para identificar de forma automatizada imperfeições na malha rodoviária (buracos e panelas). Utilizando modelos de **Segmentação de Instâncias**, o sistema não apenas detecta a presença da falha, mas delineia o contorno exato do problema, permitindo futuramente mensurar a área afetada para auxiliar órgãos de manutenção urbana.
+
+---
+
+## 🏗️ O que é o Trabalho?
+A aplicação consiste em uma solução de IA de ponta a ponta que engloba:
+1. **Modelo de Deep Learning:** Utilização da arquitetura estadual da arte **YOLOv8** (especificamente o modelo pré-treinado `yolov8n-seg.pt` focado em segmentação).
+2. **Backend (API):** Desenvolvido em **FastAPI** para gerenciar as requisições, receber imagens e vídeos e processar a inferência do modelo de IA de forma rápida.
+3. **Frontend (Interface Web):** Uma interface gráfica moderna, responsiva e em *Modo Escuro (Dark Mode)*, onde o usuário pode enviar arquivos, ajustar a barra de sensibilidade (confiança) do modelo em tempo real e visualizar o resultado segmentado na tela.
+
+---
+
+## 📊 Dataset (Origem e Tratamento)
+* **Origem:** O dataset foi coletado e exportado através da plataforma **Roboflow**, contendo imagens reais de ruas e rodovias com falhas asfálticas.
+* **Classes originais:** `Pothole` (buracos grandes/panelas) e `hole` (buracos comuns).
+
+### 🛠️ Desafios Técnicos e Soluções Aplicadas:
+Durante a inicialização do treinamento, o ecossistema PyTorch/YOLO acusou inconsistências críticas nos dados brutos vindos do Roboflow (erros de dimensões de tensores vazios e classes fora do limite). 
+Para salvar o projeto de segmentação, foi desenvolvido um script customizado em Python que realizou uma limpeza cirúrgica no dataset local:
+* **Remoção de anotações mistas:** Foram deletadas linhas de anotação que continham caixas delimitadoras normais (Bounding Boxes de detecção pura com 5 elementos), forçando o dataset a conter estritamente polígonos de segmentação.
+* **Filtro de Classes Fantasmas:** Arquivos de texto que continham referências a uma terceira classe inexistente (IDs `>= 2`) foram limpos para alinhar-se perfeitamente às duas classes configuradas no arquivo `data.yaml`.
+* **Limpeza de Cache:** Resíduos de arquivos `.cache` antigos foram expurgados para garantir que o YOLO reavaliasse o dataset corrigido do zero.
+
+---
+
+## 🚀 Ambiente de Treinamento e Validação
+
+Dado o peso computacional de treinar uma rede neural convolucional para segmentação, o treinamento foi portado e executado com sucesso em ambiente de nuvem no **Google Colab** utilizando aceleração por hardware de uma GPU dedicada **NVIDIA Tesla T4**.
+
+### Parâmetros de Treino:
+* **Modelo Base:** `yolov8n-seg.pt`
+* **Épocas:** 50
+* **Tamanho da Imagem (imgsz):** 640x640 pixels
+* **Batch Size:** 32 (otimizado para a GPU do ambiente)
+* **Tempo total de processamento:** ~1.215 horas (1h 13min)
+
+---
+
+## 📉 Análise dos Resultados
+
+A validação do modelo gerou as seguintes métricas de desempenho:
+
+* **Classe Pothole:** Alcançou excelentes taxas de sensibilidade (**67%** de acerto direto no contorno de panelas volumosas). Por ser uma classe com pouca amostragem no dataset (apenas 9 instâncias de teste), o resultado foi considerado muito satisfatório para um modelo *Nano*.
+* **Classe hole:** Apresentou uma capacidade massiva de encontrar os alvos (Sensibilidade/Recall de **81%**). 
+* **Falsos Positivos (Oportunidade de Melhoria):** A matriz de confusão indicou que o modelo inicial se mostrou "empolgado demais", confundindo texturas irregulares de asfalto, sombras ou emendas com buracos (gerando um volume alto de falsos positivos contra o *Background*). 
+* **Solução Prática Aplicada:** O problema foi mitigado diretamente na aplicação ao ajustar o slider de confiança do frontend de `0.25` para `0.35`~`0.40`. Isso filtrou ruídos visuais e gerou segmentações limpas e altamente confiáveis.
+
+---
+
+## 📸 Demonstração do Projeto em Funcionamento
+
+Nesta seção estão os registros visuais da aplicação final recebendo uma imagem de teste real e aplicando as máscaras de segmentação com sucesso através da API.
+
+<div align="center">
+
+### Interface Principal e Input de Imagem
+![Interface de Entrada](img/print1.png)
+
+### Resultado da Segmentação em Tempo Real (Confiança Ajustada)
+![Resultado da Segmentação](img/print2.png)
+
+</div>
+
+---
+
+## 💻 Como Rodar o Projeto na Sua Máquina
+
+### 1. Pré-requisitos
+Certifique-se de ter o **Python 3.10+** instalado no seu computador.
+
+### 2. Instalação das Dependências
+Instale as bibliotecas necessárias abrindo o terminal na pasta raiz do projeto e executando:
+```bash
+pip install ultralytics fastapi uvicorn python-multipart
