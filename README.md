@@ -65,6 +65,7 @@ Nesta seção estão os registros visuais da aplicação final recebendo uma ima
 
 ### Interface Principal
 ![Interface de Entrada1](img/print1.png)
+
 ![Interface de Entrada2](img/print3.png)
 
 ### Resultado da Segmentação em Tempo Real (Confiança Ajustada)
