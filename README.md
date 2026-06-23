@@ -89,8 +89,8 @@ pip install ultralytics fastapi uvicorn python-multipart
 ### 3. Backend:
 Para ativar o back no terminal digite: 
 ```bash
-pip install fastapi uvicorn ultralytics python-multipart
 python -m uvicorn api:app --reload
+
 ```
 ## 4. Frontend: 
 Para ativar o front no terminal:
@@ -98,4 +98,5 @@ Para ativar o front no terminal:
 cd frontend
 npm install
 npm run dev
+
 ```
