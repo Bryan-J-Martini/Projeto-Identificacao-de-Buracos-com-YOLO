@@ -63,8 +63,9 @@ Nesta seção estão os registros visuais da aplicação final recebendo uma ima
 
 <div align="center">
 
-### Interface Principal e Input de Imagem
-![Interface de Entrada](img/print1.png)
+### Interface Principal
+![Interface de Entrada1](img/print1.png)
+![Interface de Entrada2](img/print3.png)
 
 ### Resultado da Segmentação em Tempo Real (Confiança Ajustada)
 ![Resultado da Segmentação](img/print2.png)
@@ -87,11 +88,13 @@ pip install ultralytics fastapi uvicorn python-multipart
 ### 3. Backend:
 Para ativar o back no terminal digite: 
 ```bash
-    uvicorn api:app --reload
+pip install fastapi uvicorn ultralytics python-multipart
+python -m uvicorn api:app --reload
 ```
 ## 4. Frontend: 
 Para ativar o front no terminal:
 ```bash
-    cd frontend
-    npm run dev
+cd frontend
+npm install
+npm run dev
 ```
